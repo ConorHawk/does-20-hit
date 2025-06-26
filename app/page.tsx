@@ -1,4 +1,5 @@
 import { DiceRoller } from '@/components/dice-roller/DiceRoller';
+import { DiceIconsRow } from '@/components/dice-roller/DiceIconsRow';
 
 export default function Home() {
   return (
@@ -10,6 +11,8 @@ export default function Home() {
             A keyboard-only dice roller for tabletop RPGs
           </p>
         </header>
+        
+        <DiceIconsRow />
         
         <main>
           <DiceRoller />
