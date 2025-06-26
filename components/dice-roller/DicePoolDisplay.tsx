@@ -82,7 +82,7 @@ export function DicePoolDisplay({ dicePool, modifier, compact = false }: DicePoo
   return (
     <div className="flex items-center gap-1 flex-wrap">
       <AnimatePresence mode="popLayout">
-        {elements.map((element, index) => (
+        {elements.map((element) => (
           <motion.div
             key={element.key}
             initial={element.type === 'die' ? { 
@@ -114,12 +114,10 @@ export function DicePoolDisplay({ dicePool, modifier, compact = false }: DicePoo
               ease: "easeOut",
               type: "spring",
               stiffness: 120,
-              damping: 12,
-              delay: index * 0.05
+              damping: 12
             } : { 
               duration: 0.3, 
-              ease: "easeOut",
-              delay: index * 0.02
+              ease: "easeOut"
             }}
             layout
           >
