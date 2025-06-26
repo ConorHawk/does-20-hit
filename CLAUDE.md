@@ -40,3 +40,7 @@ components/       # React components (to be added with shadcn/ui)
 ```
 
 The project follows Next.js App Router conventions where each route is a folder with page.tsx, and layouts wrap their children automatically.
+
+## Claude Interaction Guidelines
+
+- Dont run the test server for me to test

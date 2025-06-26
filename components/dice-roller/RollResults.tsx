@@ -1,18 +1,15 @@
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { RollResult } from '@/lib/dice-types';
 import { cn } from '@/lib/utils';
-import { RotateCcw } from 'lucide-react';
 import Image from 'next/image';
 import { DiceResultSegment } from './DiceResultSegment';
 
 interface RollResultsProps {
   result: RollResult | null;
-  onReroll: () => void;
   className?: string;
 }
 
-export function RollResults({ result, onReroll, className }: RollResultsProps) {
+export function RollResults({ result, className }: RollResultsProps) {
   if (!result) {
     return (
       <Card className={cn("p-6 text-center", className)}>

@@ -27,6 +27,13 @@ export interface RollHistoryEntry {
   displayText: string;
 }
 
+export interface FavoriteRoll {
+  id: string;
+  name: string;
+  dicePool: DiceGroup[];
+  modifier: number;
+}
+
 export interface DiceRollerState {
   currentDieType: DieType;
   dicePool: DiceGroup[];
@@ -34,6 +41,7 @@ export interface DiceRollerState {
   pendingModifier: string;
   lastRoll: RollResult | null;
   history: RollHistoryEntry[];
+  favorites: FavoriteRoll[];
   isHistoryVisible: boolean;
   isHelpVisible: boolean;
   quickMode: boolean;

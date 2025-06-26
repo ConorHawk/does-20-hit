@@ -31,7 +31,6 @@ export function DiceRoller({ className }: DiceRollerProps) {
         <div className="space-y-6">
           <RollResults
             result={state.lastRoll}
-            onReroll={actions.rerollLast}
           />
         </div>
       </div>

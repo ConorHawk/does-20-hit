@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { DiceRollerState } from '@/lib/dice-types';
+import { DiceRollerState, FavoriteRoll } from '@/lib/dice-types';
 
 interface KeyboardActions {
   addDice: (dieType: any, quantity: number) => void;
@@ -15,9 +15,16 @@ interface KeyboardActions {
   toggleHelp: () => void;
   setDieType: (dieType: any) => void;
   startModifierMode: (isNegative?: boolean) => void;
+  rollFromFavorite: (favorite: FavoriteRoll) => void;
 }
 
-export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardActions) {
+interface UseKeyboardShortcutsProps {
+  state: DiceRollerState;
+  actions: KeyboardActions;
+  onOpenSaveFavoriteModal?: () => void;
+}
+
+export function useKeyboardShortcuts({ state, actions, onOpenSaveFavoriteModal }: UseKeyboardShortcutsProps) {
   const handleKeyPress = useCallback((event: KeyboardEvent) => {
     // Prevent handling if typing in an input field
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
@@ -27,14 +34,18 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
     const key = event.key.toLowerCase();
     const isShift = event.shiftKey;
     const isCtrl = event.ctrlKey || event.metaKey;
+    const isAlt = event.altKey;
 
-    // Prevent default for most keys we handle
+    // Prevent default for keys we handle
     const handledKeys = [
-      'enter', 'escape', 'backspace', 'r', 'c', '?',
-      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-'
+      'enter', 'escape', 'backspace', 'r', 'c', '?', 'f',
+      'q', 'w', 'e', 't', 'y', 'u', 'i', 'o' // Favorites keys
     ];
     
-    if (handledKeys.includes(key)) {
+    // Only prevent default for number keys if not using Alt modifier  
+    const numberKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-'];
+    
+    if (handledKeys.includes(key) || (numberKeys.includes(key) && !isAlt)) {
       event.preventDefault();
     }
 
@@ -81,6 +92,27 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
         }
         break;
 
+      // Favorites shortcuts using Q-W-E-R-T-Y-U-I-O
+      case 'q':
+      case 'w':
+      case 'e':
+      case 'r':
+      case 't':
+      case 'y':
+      case 'u':
+      case 'i':
+      case 'o':
+        const favoriteKeyMap: Record<string, number> = {
+          'q': 0, 'w': 1, 'e': 2, 'r': 3, 't': 4,
+          'y': 5, 'u': 6, 'i': 7, 'o': 8
+        };
+        
+        const favoriteIndex = favoriteKeyMap[key];
+        if (favoriteIndex < state.favorites.length) {
+          actions.rollFromFavorite(state.favorites[favoriteIndex]);
+        }
+        break;
+
       // Negative modifier
       case '-':
         // Only add - if we don't already have one at the start
@@ -122,8 +154,15 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
           navigator.clipboard.writeText(state.lastRoll.total.toString());
         }
         break;
+
+      // Save favorite
+      case 'f':
+        if (onOpenSaveFavoriteModal && (state.dicePool.length > 0 || state.modifier !== 0)) {
+          onOpenSaveFavoriteModal();
+        }
+        break;
     }
-  }, [state, actions]);
+  }, [state, actions, onOpenSaveFavoriteModal]);
 
 
   useEffect(() => {

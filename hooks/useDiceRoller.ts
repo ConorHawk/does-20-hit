@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { DiceRollerState, DieType, RollResult, RollHistoryEntry } from '@/lib/dice-types';
+import { useState, useCallback, useEffect } from 'react';
+import { DiceRollerState, DieType, RollResult, RollHistoryEntry, FavoriteRoll } from '@/lib/dice-types';
 import { rollDicePool as rollDicePoolUtil, rollDice, addDiceToPool, formatRollResult } from '@/lib/dice-utils';
 
 const initialState: DiceRollerState = {
@@ -9,13 +9,38 @@ const initialState: DiceRollerState = {
   pendingModifier: '',
   lastRoll: null,
   history: [],
+  favorites: [],
   isHistoryVisible: false,
   isHelpVisible: false,
   quickMode: true,
 };
 
+const FAVORITES_STORAGE_KEY = 'dice-roller-favorites';
+
 export function useDiceRoller() {
   const [state, setState] = useState<DiceRollerState>(initialState);
+
+  // Load favorites from localStorage on mount
+  useEffect(() => {
+    try {
+      const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (storedFavorites) {
+        const favorites = JSON.parse(storedFavorites) as FavoriteRoll[];
+        setState(prev => ({ ...prev, favorites }));
+      }
+    } catch (error) {
+      console.warn('Failed to load favorites from localStorage:', error);
+    }
+  }, []);
+
+  // Save favorites to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(state.favorites));
+    } catch (error) {
+      console.warn('Failed to save favorites to localStorage:', error);
+    }
+  }, [state.favorites]);
 
   const addDice = useCallback((dieType: DieType, quantity: number) => {
     setState(prev => ({
@@ -219,6 +244,47 @@ export function useDiceRoller() {
     return result;
   }, []);
 
+  const saveFavorite = useCallback((name: string) => {
+    const favorite: FavoriteRoll = {
+      id: Date.now().toString(),
+      name,
+      dicePool: [...state.dicePool],
+      modifier: state.modifier,
+    };
+
+    setState(prev => ({
+      ...prev,
+      favorites: [favorite, ...prev.favorites],
+    }));
+
+    return favorite;
+  }, [state.dicePool, state.modifier]);
+
+  const rollFromFavorite = useCallback((favorite: FavoriteRoll) => {
+    const result = rollDicePoolUtil(favorite.dicePool, favorite.modifier);
+    
+    const historyEntry: RollHistoryEntry = {
+      id: Date.now().toString(),
+      result,
+      displayText: formatRollResult(result),
+    };
+
+    setState(prev => ({
+      ...prev,
+      lastRoll: result,
+      history: [historyEntry, ...prev.history.slice(0, 9)],
+    }));
+
+    return result;
+  }, []);
+
+  const deleteFavorite = useCallback((favoriteId: string) => {
+    setState(prev => ({
+      ...prev,
+      favorites: prev.favorites.filter(fav => fav.id !== favoriteId),
+    }));
+  }, []);
+
   return {
     state,
     actions: {
@@ -237,6 +303,9 @@ export function useDiceRoller() {
       startModifierMode,
       loadHistoryRoll,
       rerollFromHistory,
+      saveFavorite,
+      rollFromFavorite,
+      deleteFavorite,
     },
   };
 }
