@@ -25,16 +25,18 @@ export function rollDice(dieType: DieType, quantity: number): DieRoll[] {
   return rolls;
 }
 
-export function rollDicePool(dicePool: DiceGroup[], modifier: number = 0): RollResult {
+export function rollDicePool(dicePool: DieType[], modifier: number = 0): RollResult {
   const allRolls: DieRoll[] = [];
   
-  for (const group of dicePool) {
-    const rolls = rollDice(group.type, group.quantity);
+  for (const dieType of dicePool) {
+    const rolls = rollDice(dieType, 1);
     allRolls.push(...rolls);
   }
   
   const subtotal = allRolls.reduce((sum, roll) => sum + roll.value, 0);
   const total = subtotal + modifier;
+  
+  const dicePoolGroups = groupDiceByType(dicePool.map(type => ({ type, quantity: 1 })));
   
   return {
     dice: allRolls,
@@ -42,14 +44,24 @@ export function rollDicePool(dicePool: DiceGroup[], modifier: number = 0): RollR
     modifier,
     total,
     timestamp: new Date(),
-    dicePool: [...dicePool],
+    dicePool: dicePoolGroups,
   };
 }
 
-export function formatDicePool(dicePool: DiceGroup[]): string {
+export function formatDicePool(dicePool: DieType[] | DiceGroup[]): string {
   if (dicePool.length === 0) return 'Empty';
   
-  const groups = dicePool.map(group => 
+  // Handle DieType[] (individual dice)
+  if (typeof dicePool[0] === 'string') {
+    const individualDice = dicePool as DieType[];
+    const groups = groupDiceByType(individualDice.map(type => ({ type, quantity: 1 })));
+    return groups.map(group => 
+      group.quantity === 1 ? group.type : `${group.quantity}${group.type}`
+    ).join(' + ');
+  }
+  
+  // Handle DiceGroup[] (legacy format)
+  const groups = (dicePool as DiceGroup[]).map(group => 
     group.quantity === 1 ? group.type : `${group.quantity}${group.type}`
   );
   
@@ -84,37 +96,18 @@ export function groupDiceByType(dicePool: DiceGroup[]): DiceGroup[] {
   }));
 }
 
-export function addDiceToPool(dicePool: DiceGroup[], dieType: DieType, quantity: number): DiceGroup[] {
+export function addDiceToPool(dicePool: DieType[], dieType: DieType, quantity: number): DieType[] {
   const newPool = [...dicePool];
-  const existingIndex = newPool.findIndex(group => group.type === dieType);
   
-  if (existingIndex >= 0) {
-    newPool[existingIndex] = {
-      ...newPool[existingIndex],
-      quantity: newPool[existingIndex].quantity + quantity,
-    };
-  } else {
-    newPool.push({ type: dieType, quantity });
+  for (let i = 0; i < quantity; i++) {
+    newPool.push(dieType);
   }
   
   return newPool;
 }
 
-export function removeDiceFromPool(dicePool: DiceGroup[], dieType: DieType, quantity: number): DiceGroup[] {
+export function removeLastDieFromPool(dicePool: DieType[]): DieType[] {
   const newPool = [...dicePool];
-  const existingIndex = newPool.findIndex(group => group.type === dieType);
-  
-  if (existingIndex >= 0) {
-    const newQuantity = newPool[existingIndex].quantity - quantity;
-    if (newQuantity <= 0) {
-      newPool.splice(existingIndex, 1);
-    } else {
-      newPool[existingIndex] = {
-        ...newPool[existingIndex],
-        quantity: newQuantity,
-      };
-    }
-  }
-  
+  newPool.pop();
   return newPool;
 }

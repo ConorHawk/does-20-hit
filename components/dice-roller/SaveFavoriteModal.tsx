@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DiceGroup } from "@/lib/dice-types";
+import { DieType } from "@/lib/dice-types";
 import { DicePoolDisplay } from "./DicePoolDisplay";
 
 interface SaveFavoriteModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (name: string) => void;
-  dicePool: DiceGroup[];
+  dicePool: DieType[];
   modifier: number;
 }
 

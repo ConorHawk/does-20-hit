@@ -1,10 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { DiceGroup } from "@/lib/dice-types";
+import { DieType } from "@/lib/dice-types";
 import { cn } from "@/lib/utils";
 import { DicePoolDisplay } from "./DicePoolDisplay";
 
 interface DicePoolProps {
-  dicePool: DiceGroup[];
+  dicePool: DieType[];
   modifier: number;
   pendingModifier: string;
   quickMode: boolean;

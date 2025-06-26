@@ -1,11 +1,12 @@
-import { DiceGroup } from '@/lib/dice-types';
+import { DiceGroup, DieType } from '@/lib/dice-types';
+import { groupDiceByType } from '@/lib/dice-utils';
 import { getDiceIconPath } from '@/lib/utils';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactElement } from 'react';
 
 interface DicePoolDisplayProps {
-  dicePool: DiceGroup[];
+  dicePool: DieType[] | DiceGroup[];
   modifier: number;
   compact?: boolean;
 }
@@ -15,8 +16,13 @@ export function DicePoolDisplay({ dicePool, modifier, compact = false }: DicePoo
     return <span className="text-muted-foreground">Empty</span>;
   }
 
+  // Convert DieType[] to DiceGroup[] if needed
+  const diceGroups: DiceGroup[] = typeof dicePool[0] === 'string' 
+    ? groupDiceByType((dicePool as DieType[]).map(type => ({ type, quantity: 1 })))
+    : dicePool as DiceGroup[];
+
   if (compact) {
-    const diceText = dicePool.map(group => 
+    const diceText = diceGroups.map(group => 
       `${group.quantity}${group.type}`
     ).join(' + ');
     
@@ -33,7 +39,7 @@ export function DicePoolDisplay({ dicePool, modifier, compact = false }: DicePoo
     content: ReactElement;
   }> = [];
 
-  dicePool.forEach((group, groupIndex) => {
+  diceGroups.forEach((group, groupIndex) => {
     // Add plus sign before group (except for first group)
     if (groupIndex > 0) {
       elements.push({

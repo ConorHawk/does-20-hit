@@ -36,7 +36,7 @@ export function HelpModal({ isOpen, onClose }: HelpModalProps) {
               </div>
               <div className="flex justify-between items-center">
                 <kbd className="px-2 py-1 bg-muted rounded font-mono whitespace-nowrap">BACKSPACE</kbd>
-                <span className="ml-2">Edit modifier or remove dice</span>
+                <span className="ml-2">Edit modifier or remove last die</span>
               </div>
             </div>
           </section>

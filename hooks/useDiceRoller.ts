@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
-import { DiceRollerState, DieType, RollResult, RollHistoryEntry, FavoriteRoll } from '@/lib/dice-types';
-import { rollDicePool as rollDicePoolUtil, rollDice, addDiceToPool, formatRollResult } from '@/lib/dice-utils';
+import { DiceRollerState, DieType, RollResult, RollHistoryEntry, FavoriteRoll, InputAction } from '@/lib/dice-types';
+import { rollDicePool as rollDicePoolUtil, rollDice, addDiceToPool, removeLastDieFromPool, formatRollResult } from '@/lib/dice-utils';
 
 const initialState: DiceRollerState = {
   currentDieType: 'd20',
   dicePool: [],
   modifier: 0,
   pendingModifier: '',
+  inputHistory: [],
   lastRoll: null,
   history: [],
   favorites: [],
@@ -59,12 +60,25 @@ export function useDiceRoller() {
   }, [state.hotbarSlots]);
 
   const addDice = useCallback((dieType: DieType, quantity: number) => {
-    setState(prev => ({
-      ...prev,
-      dicePool: addDiceToPool(prev.dicePool, dieType, quantity),
-      currentDieType: dieType,
-      quickMode: false,
-    }));
+    setState(prev => {
+      const newInputHistory = [...prev.inputHistory];
+      // Add each die individually to input history
+      for (let i = 0; i < quantity; i++) {
+        newInputHistory.push({
+          type: 'die',
+          value: dieType,
+          timestamp: Date.now() + i, // Add small offset to maintain order
+        });
+      }
+      
+      return {
+        ...prev,
+        dicePool: addDiceToPool(prev.dicePool, dieType, quantity),
+        currentDieType: dieType,
+        quickMode: false,
+        inputHistory: newInputHistory,
+      };
+    });
   }, []);
 
   const appendToPendingModifier = useCallback((character: string) => {
@@ -72,10 +86,17 @@ export function useDiceRoller() {
       const newPendingModifier = prev.pendingModifier + character;
       const value = parseInt(newPendingModifier);
       
+      const newInputHistory = [...prev.inputHistory, {
+        type: 'modifier_digit' as const,
+        value: character,
+        timestamp: Date.now(),
+      }];
+      
       return {
         ...prev,
         pendingModifier: newPendingModifier,
         modifier: !isNaN(value) ? value : 0,
+        inputHistory: newInputHistory,
       };
     });
   }, []);
@@ -165,7 +186,15 @@ export function useDiceRoller() {
   const rerollLast = useCallback(() => {
     if (!state.lastRoll) return null;
     
-    const result = rollDicePoolUtil(state.lastRoll.dicePool, state.lastRoll.modifier);
+    // Convert DiceGroup[] to DieType[] for reroll
+    const individualDice: DieType[] = [];
+    state.lastRoll.dicePool.forEach(group => {
+      for (let i = 0; i < group.quantity; i++) {
+        individualDice.push(group.type);
+      }
+    });
+    
+    const result = rollDicePoolUtil(individualDice, state.lastRoll.modifier);
     
     const historyEntry: RollHistoryEntry = {
       id: Date.now().toString(),
@@ -188,19 +217,43 @@ export function useDiceRoller() {
       dicePool: [],
       modifier: 0,
       pendingModifier: '',
+      inputHistory: [],
       quickMode: true,
     }));
   }, []);
 
-  const removeLastDiceGroup = useCallback(() => {
+  const removeLastInput = useCallback(() => {
     setState(prev => {
-      const newPool = [...prev.dicePool];
-      newPool.pop();
-      return {
-        ...prev,
-        dicePool: newPool,
-        quickMode: newPool.length === 0,
-      };
+      if (prev.inputHistory.length === 0) {
+        return prev; // Nothing to remove
+      }
+      
+      const newInputHistory = [...prev.inputHistory];
+      const lastAction = newInputHistory.pop()!;
+      
+      if (lastAction.type === 'die') {
+        // Remove last die from pool
+        const newPool = removeLastDieFromPool(prev.dicePool);
+        return {
+          ...prev,
+          dicePool: newPool,
+          quickMode: newPool.length === 0,
+          inputHistory: newInputHistory,
+        };
+      } else if (lastAction.type === 'modifier_digit') {
+        // Remove last character from pending modifier
+        const newPendingModifier = prev.pendingModifier.slice(0, -1);
+        const value = parseInt(newPendingModifier);
+        
+        return {
+          ...prev,
+          pendingModifier: newPendingModifier,
+          modifier: newPendingModifier === '' ? 0 : (!isNaN(value) ? value : 0),
+          inputHistory: newInputHistory,
+        };
+      }
+      
+      return prev;
     });
   }, []);
 
@@ -234,16 +287,32 @@ export function useDiceRoller() {
   }, []);
 
   const loadHistoryRoll = useCallback((historyEntry: RollHistoryEntry) => {
+    // Convert DiceGroup[] back to DieType[] for the new format
+    const individualDice: DieType[] = [];
+    historyEntry.result.dicePool.forEach(group => {
+      for (let i = 0; i < group.quantity; i++) {
+        individualDice.push(group.type);
+      }
+    });
+    
     setState(prev => ({
       ...prev,
-      dicePool: [...historyEntry.result.dicePool],
+      dicePool: individualDice,
       modifier: historyEntry.result.modifier,
-      quickMode: historyEntry.result.dicePool.length === 0,
+      quickMode: individualDice.length === 0,
     }));
   }, []);
 
   const rerollFromHistory = useCallback((historyEntry: RollHistoryEntry) => {
-    const result = rollDicePoolUtil(historyEntry.result.dicePool, historyEntry.result.modifier);
+    // Convert DiceGroup[] to DieType[] for reroll
+    const individualDice: DieType[] = [];
+    historyEntry.result.dicePool.forEach(group => {
+      for (let i = 0; i < group.quantity; i++) {
+        individualDice.push(group.type);
+      }
+    });
+    
+    const result = rollDicePoolUtil(individualDice, historyEntry.result.modifier);
     
     const newHistoryEntry: RollHistoryEntry = {
       id: Date.now().toString(),
@@ -351,7 +420,7 @@ export function useDiceRoller() {
       rollDicePool,
       rerollLast,
       clearDicePool,
-      removeLastDiceGroup,
+      removeLastInput,
       toggleHistory,
       toggleHelp,
       setDieType,

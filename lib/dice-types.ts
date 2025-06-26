@@ -27,18 +27,25 @@ export interface RollHistoryEntry {
   displayText: string;
 }
 
+export interface InputAction {
+  type: 'die' | 'modifier_digit';
+  value: DieType | string;
+  timestamp: number;
+}
+
 export interface FavoriteRoll {
   id: string;
   name: string;
-  dicePool: DiceGroup[];
+  dicePool: DieType[];
   modifier: number;
 }
 
 export interface DiceRollerState {
   currentDieType: DieType;
-  dicePool: DiceGroup[];
+  dicePool: DieType[];
   modifier: number;
   pendingModifier: string;
+  inputHistory: InputAction[];
   lastRoll: RollResult | null;
   history: RollHistoryEntry[];
   favorites: FavoriteRoll[];

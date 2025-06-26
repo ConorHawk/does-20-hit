@@ -4,13 +4,12 @@ import { DiceRollerState, FavoriteRoll } from '@/lib/dice-types';
 interface KeyboardActions {
   addDice: (dieType: any, quantity: number) => void;
   appendToPendingModifier: (digit: string) => void;
-  removeFromPendingModifier: () => void;
   setModifier: (modifier: number, isNegative?: boolean) => void;
   rollQuickD20: (quantity?: number) => void;
   rollDicePool: () => void;
   rerollLast: () => void;
   clearDicePool: () => void;
-  removeLastDiceGroup: () => void;
+  removeLastInput: () => void;
   toggleHistory: () => void;
   toggleHelp: () => void;
   setDieType: (dieType: any) => void;
@@ -126,15 +125,9 @@ export function useKeyboardShortcuts({ state, actions, onOpenSaveFavoriteModal }
         actions.clearDicePool();
         break;
 
-      // Remove last dice group or backspace from modifier
+      // Remove last input (die or modifier digit)
       case 'backspace':
-        if (state.quickMode && state.dicePool.length === 0 && state.pendingModifier !== '') {
-          // Remove from pending modifier
-          actions.removeFromPendingModifier();
-        } else {
-          // Remove last dice group
-          actions.removeLastDiceGroup();
-        }
+        actions.removeLastInput();
         break;
 
       // Reroll
