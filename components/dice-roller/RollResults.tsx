@@ -53,18 +53,31 @@ export function RollResults({ result, className }: RollResultsProps) {
         </div>
 
         {/* Individual dice results */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-1.5 justify-center">
           <AnimatePresence mode="popLayout">
             {result.dice.map((die, index) => (
               <motion.div
                 key={`${die.type}-${index}-${result.timestamp.getTime()}`}
                 initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8, y: -10 }}
-                transition={{ 
-                  duration: 0.2, 
-                  ease: "easeOut",
-                  delay: index * 0.05 
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: 0,
+                  transition: { 
+                    duration: 0.2, 
+                    ease: "easeOut",
+                    delay: index * 0.05 
+                  }
+                }}
+                exit={{ 
+                  opacity: 0, 
+                  scale: 0.8, 
+                  y: -10,
+                  transition: { 
+                    duration: 0.2, 
+                    ease: "easeOut",
+                    delay: 0 
+                  }
                 }}
                 layout
               >
@@ -75,12 +88,25 @@ export function RollResults({ result, className }: RollResultsProps) {
               <motion.div
                 key={`modifier-${result.modifier}-${result.timestamp.getTime()}`}
                 initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8, y: -10 }}
-                transition={{ 
-                  duration: 0.2, 
-                  ease: "easeOut",
-                  delay: result.dice.length * 0.05 
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1, 
+                  y: 0,
+                  transition: { 
+                    duration: 0.2, 
+                    ease: "easeOut",
+                    delay: result.dice.length * 0.05 
+                  }
+                }}
+                exit={{ 
+                  opacity: 0, 
+                  scale: 0.8, 
+                  y: -10,
+                  transition: { 
+                    duration: 0.2, 
+                    ease: "easeOut",
+                    delay: 0 
+                  }
                 }}
                 layout
               >

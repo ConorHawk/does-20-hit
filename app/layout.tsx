@@ -46,7 +46,6 @@ export default function RootLayout({
                     height={28}
                     className="opacity-80"
                   />
-                  <h1 className="text-lg font-semibold">Does 20 Hit?</h1>
                 </div>
                 <SidebarTrigger className="-mr-1" />
               </header>
