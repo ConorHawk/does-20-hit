@@ -17,16 +17,16 @@ export function DicePoolDisplay({ dicePool, modifier }: DicePoolDisplayProps) {
       {dicePool.map((group, index) => (
         <span key={`${group.type}-${index}`} className="flex items-center gap-1">
           {index > 0 && <span className="text-muted-foreground mx-1">+</span>}
-          <span className="font-semibold">
-            {group.quantity > 1 && group.quantity}
-          </span>
-          <Image
-            src={getDiceIconPath(group.type)}
-            alt={`${group.type} die`}
-            width={20}
-            height={20}
-            className="opacity-80 inline-block"
-          />
+          {Array.from({ length: group.quantity }).map((_, i) => (
+            <Image
+              key={`${group.type}-${index}-${i}`}
+              src={getDiceIconPath(group.type)}
+              alt={`${group.type} die`}
+              width={20}
+              height={20}
+              className="opacity-80 inline-block"
+            />
+          ))}
         </span>
       ))}
       {modifier !== 0 && (
