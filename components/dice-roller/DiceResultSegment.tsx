@@ -1,6 +1,7 @@
 import { cn, getDiceIconPath } from "@/lib/utils";
 import { DieRoll } from "@/lib/dice-types";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface DiceResultSegmentProps {
   die?: DieRoll;
@@ -61,13 +62,25 @@ export function DiceResultSegment({
         !die.isCrit && !die.isFail && "bg-muted border-muted-foreground/20"
       )}
     >
-      <Image
-        src={getDiceIconPath(die.type)}
-        alt={`${die.type} die`}
-        width={sizeConfig.icon}
-        height={sizeConfig.icon}
-        className="opacity-60"
-      />
+      <motion.div
+        initial={{ rotate: 0 }}
+        animate={{ rotate: 360 }}
+        transition={{ 
+          duration: 0.6, 
+          ease: "easeOut",
+          type: "spring",
+          stiffness: 100,
+          damping: 15
+        }}
+      >
+        <Image
+          src={getDiceIconPath(die.type)}
+          alt={`${die.type} die`}
+          width={sizeConfig.icon}
+          height={sizeConfig.icon}
+          className="opacity-60"
+        />
+      </motion.div>
       <span
         className={cn(
           "font-bold",

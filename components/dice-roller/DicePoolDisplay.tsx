@@ -1,6 +1,8 @@
 import { DiceGroup } from '@/lib/dice-types';
 import { getDiceIconPath } from '@/lib/utils';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ReactElement } from 'react';
 
 interface DicePoolDisplayProps {
   dicePool: DiceGroup[];
@@ -24,31 +26,107 @@ export function DicePoolDisplay({ dicePool, modifier, compact = false }: DicePoo
     return <span className="font-mono text-xs">{diceText}{modifierText}</span>;
   }
 
+  // Create a flat array of all elements (dice, plus signs, modifier)
+  const elements: Array<{
+    type: 'die' | 'plus' | 'modifier';
+    key: string;
+    content: ReactElement;
+  }> = [];
+
+  dicePool.forEach((group, groupIndex) => {
+    // Add plus sign before group (except for first group)
+    if (groupIndex > 0) {
+      elements.push({
+        type: 'plus',
+        key: `plus-${groupIndex}`,
+        content: <span className="text-muted-foreground mx-1">+</span>
+      });
+    }
+    
+    // Add individual dice for this group
+    Array.from({ length: group.quantity }).forEach((_, dieIndex) => {
+      elements.push({
+        type: 'die',
+        key: `${group.type}-${groupIndex}-${dieIndex}`,
+        content: (
+          <Image
+            src={getDiceIconPath(group.type)}
+            alt={`${group.type} die`}
+            width={20}
+            height={20}
+            className="opacity-80 inline-block"
+          />
+        )
+      });
+    });
+  });
+
+  // Add modifier if present
+  if (modifier !== 0) {
+    elements.push({
+      type: 'plus',
+      key: 'modifier-plus',
+      content: (
+        <span className="text-muted-foreground mx-1">
+          {modifier > 0 ? '+' : ''}
+        </span>
+      )
+    });
+    elements.push({
+      type: 'modifier',
+      key: 'modifier',
+      content: <span className="font-semibold">{modifier}</span>
+    });
+  }
+
   return (
     <div className="flex items-center gap-1 flex-wrap">
-      {dicePool.map((group, index) => (
-        <span key={`${group.type}-${index}`} className="flex items-center gap-1">
-          {index > 0 && <span className="text-muted-foreground mx-1">+</span>}
-          {Array.from({ length: group.quantity }).map((_, i) => (
-            <Image
-              key={`${group.type}-${index}-${i}`}
-              src={getDiceIconPath(group.type)}
-              alt={`${group.type} die`}
-              width={20}
-              height={20}
-              className="opacity-80 inline-block"
-            />
-          ))}
-        </span>
-      ))}
-      {modifier !== 0 && (
-        <>
-          <span className="text-muted-foreground mx-1">
-            {modifier > 0 ? '+' : ''}
-          </span>
-          <span className="font-semibold">{modifier}</span>
-        </>
-      )}
+      <AnimatePresence mode="popLayout">
+        {elements.map((element, index) => (
+          <motion.div
+            key={element.key}
+            initial={element.type === 'die' ? { 
+              opacity: 0, 
+              scale: 0.5, 
+              rotate: 0 
+            } : { 
+              opacity: 0, 
+              scale: 0.8 
+            }}
+            animate={element.type === 'die' ? { 
+              opacity: 1, 
+              scale: 1, 
+              rotate: 360 
+            } : { 
+              opacity: 1, 
+              scale: 1 
+            }}
+            exit={element.type === 'die' ? { 
+              opacity: 0, 
+              scale: 0.5, 
+              rotate: 180 
+            } : { 
+              opacity: 0, 
+              scale: 0.8 
+            }}
+            transition={element.type === 'die' ? { 
+              duration: 0.5, 
+              ease: "easeOut",
+              type: "spring",
+              stiffness: 120,
+              damping: 12,
+              delay: index * 0.05
+            } : { 
+              duration: 0.3, 
+              ease: "easeOut",
+              delay: index * 0.02
+            }}
+            layout
+          >
+            {element.content}
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
