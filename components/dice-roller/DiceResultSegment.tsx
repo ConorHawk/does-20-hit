@@ -1,35 +1,63 @@
-import { cn, getDiceIconPath } from '@/lib/utils';
-import { DieRoll } from '@/lib/dice-types';
-import Image from 'next/image';
+import { cn, getDiceIconPath } from "@/lib/utils";
+import { DieRoll } from "@/lib/dice-types";
+import Image from "next/image";
 
 interface DiceResultSegmentProps {
-  die: DieRoll;
-  size?: 'sm' | 'md';
+  die?: DieRoll;
+  modifier?: number;
+  size?: "sm" | "md";
 }
 
-export function DiceResultSegment({ die, size = 'md' }: DiceResultSegmentProps) {
+export function DiceResultSegment({
+  die,
+  modifier,
+  size = "md",
+}: DiceResultSegmentProps) {
   const sizeClasses = {
     sm: {
-      container: 'px-2 py-1',
+      container: "px-2 py-1",
       icon: 12,
-      text: 'text-sm'
+      text: "text-sm",
     },
     md: {
-      container: 'px-3 py-2',
-      icon: 20,
-      text: 'text-lg'
-    }
+      container: "px-3 py-2",
+      icon: 18,
+      text: "text-base",
+    },
   };
 
   const sizeConfig = sizeClasses[size];
+
+  // Handle modifier display
+  if (modifier !== undefined) {
+    return (
+      <div
+        className={cn(
+          "inline-flex items-center gap-2 rounded-lg border-2",
+          sizeConfig.container,
+          "bg-muted border-muted-foreground/20"
+        )}
+      >
+        <span className={cn("font-bold", sizeConfig.text, "text-foreground")}>
+          {modifier > 0 ? "+" : ""}
+          {modifier}
+        </span>
+      </div>
+    );
+  }
+
+  // Handle die display
+  if (!die) return null;
 
   return (
     <div
       className={cn(
         "inline-flex items-center gap-2 rounded-lg border-2",
         sizeConfig.container,
-        die.isCrit && "bg-green-100 border-green-500 dark:bg-green-900 dark:border-green-400",
-        die.isFail && "bg-red-100 border-red-500 dark:bg-red-900 dark:border-red-400",
+        die.isCrit &&
+          "bg-green-100 border-green-500 dark:bg-green-900 dark:border-green-400",
+        die.isFail &&
+          "bg-red-100 border-red-500 dark:bg-red-900 dark:border-red-400",
         !die.isCrit && !die.isFail && "bg-muted border-muted-foreground/20"
       )}
     >

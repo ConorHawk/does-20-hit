@@ -36,17 +36,9 @@ export function RollResults({ result, onReroll, className }: RollResultsProps) {
   return (
     <Card className={cn("p-6", className)}>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Last Roll</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onReroll}
-            className="flex items-center gap-2"
-          >
-            <RotateCcw className="h-4 w-4" />
-            Reroll
-          </Button>
+        {/* Prominent total display */}
+        <div className="text-center">
+          <div className="text-4xl font-bold">{result.total}</div>
         </div>
 
         {/* Individual dice results */}
@@ -54,31 +46,9 @@ export function RollResults({ result, onReroll, className }: RollResultsProps) {
           {result.dice.map((die, index) => (
             <DiceResultSegment key={index} die={die} />
           ))}
-        </div>
-
-        {/* Summary */}
-        <div className="border-t pt-4 space-y-1">
-          <div className="flex justify-between text-sm">
-            <span>Subtotal:</span>
-            <span className="font-mono">{result.subtotal}</span>
-          </div>
           {result.modifier !== 0 && (
-            <div className="flex justify-between text-sm">
-              <span>Modifier:</span>
-              <span className="font-mono">
-                {result.modifier > 0 ? '+' : ''}{result.modifier}
-              </span>
-            </div>
+            <DiceResultSegment modifier={result.modifier} />
           )}
-          <div className="flex justify-between text-lg font-bold border-t pt-2">
-            <span>Total:</span>
-            <span className="font-mono">{result.total}</span>
-          </div>
-        </div>
-
-        <div className="text-xs text-muted-foreground flex justify-between">
-          <span>Press <kbd className="px-1 py-0.5 bg-muted rounded">R</kbd> to reroll</span>
-          <span>{result.timestamp.toLocaleTimeString()}</span>
         </div>
       </div>
     </Card>
