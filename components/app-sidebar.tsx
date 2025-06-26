@@ -1,7 +1,8 @@
 "use client";
 
-import { Clock, History, RotateCcw, Star, Plus, ChevronDown, ChevronRight } from "lucide-react";
+import { Clock, History, RotateCcw, Star, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { RollHistoryEntry } from "@/lib/dice-types";
 import { useDiceRollerContext } from "@/components/dice-roller-provider";
@@ -17,6 +18,23 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+
+// Animation variants for smooth transitions
+const sectionVariants = {
+  expanded: {
+    height: "auto",
+    opacity: 1
+  },
+  collapsed: {
+    height: 0,
+    opacity: 0
+  }
+};
+
+const chevronVariants = {
+  expanded: { rotate: 0 },
+  collapsed: { rotate: -90 }
+};
 
 export function AppSidebar() {
   const { state, actions } = useDiceRollerContext();
@@ -101,20 +119,33 @@ export function AppSidebar() {
                 <Star className="h-4 w-4" />
                 Favorites
               </div>
-              {isFavoritesExpanded ? (
+                <motion.div
+                variants={chevronVariants}
+                animate={isFavoritesExpanded ? "expanded" : "collapsed"}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+              >
                 <ChevronDown className="h-3 w-3" />
-              ) : (
-                <ChevronRight className="h-3 w-3" />
-              )}
+              </motion.div>
             </button>
 
-            {isFavoritesExpanded && (
-              <FavoritesPanel
-                favorites={state.favorites}
-                onRollFavorite={actions.rollFromFavorite}
-                onDeleteFavorite={actions.deleteFavorite}
-              />
-            )}
+            <AnimatePresence>
+              {isFavoritesExpanded && (
+                <motion.div
+                  variants={sectionVariants}
+                  initial="collapsed"
+                  animate="expanded"
+                  exit="collapsed"
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  style={{ overflow: "hidden" }}
+                >
+                  <FavoritesPanel
+                    favorites={state.favorites}
+                    onRollFavorite={actions.rollFromFavorite}
+                    onDeleteFavorite={actions.deleteFavorite}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* History Section */}
@@ -127,41 +158,52 @@ export function AppSidebar() {
                 <History className="h-4 w-4" />
                 History
               </div>
-              {isHistoryExpanded ? (
+              <motion.div
+                variants={chevronVariants}
+                animate={isHistoryExpanded ? "expanded" : "collapsed"}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+              >
                 <ChevronDown className="h-3 w-3" />
-              ) : (
-                <ChevronRight className="h-3 w-3" />
-              )}
+              </motion.div>
             </button>
 
-            {isHistoryExpanded && (
-              <>
-                {state.history.length === 0 ? (
-                  <div className="p-6 text-center text-muted-foreground">
-                    <div className="flex flex-col items-center gap-3">
-                      <Clock className="h-8 w-8 opacity-50" />
-                      <Image
-                        src="/icons/dice/dice-d6-light.svg"
-                        alt="D6 die"
-                        width={32}
-                        height={32}
-                        className="opacity-20"
-                      />
-                      <div>
-                        <p className="text-sm">No rolls yet</p>
-                        <p className="text-xs">
-                          Your roll history will appear here
-                        </p>
+            <AnimatePresence>
+              {isHistoryExpanded && (
+                <motion.div
+                  variants={sectionVariants}
+                  initial="collapsed"
+                  animate="expanded"
+                  exit="collapsed"
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  style={{ overflow: "hidden" }}
+                >
+                  {state.history.length === 0 ? (
+                    <div className="p-6 text-center text-muted-foreground">
+                      <div className="flex flex-col items-center gap-3">
+                        <Clock className="h-8 w-8 opacity-50" />
+                        <Image
+                          src="/icons/dice/dice-d6-light.svg"
+                          alt="D6 die"
+                          width={32}
+                          height={32}
+                          className="opacity-20"
+                        />
+                        <div>
+                          <p className="text-sm">No rolls yet</p>
+                          <p className="text-xs">
+                            Your roll history will appear here
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {state.history.map((entry) => renderHistoryEntry(entry))}
-                  </div>
-                )}
-              </>
-            )}
+                  ) : (
+                    <div className="space-y-2">
+                      {state.history.map((entry) => renderHistoryEntry(entry))}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </SidebarContent>
