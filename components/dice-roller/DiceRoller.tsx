@@ -5,6 +5,7 @@ import { DicePool } from './DicePool';
 import { RollResults } from './RollResults';
 import { HelpModal } from './HelpModal';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface DiceRollerProps {
   className?: string;
@@ -36,14 +37,24 @@ export function DiceRoller({ className }: DiceRollerProps) {
       </div>
 
       {/* Help Text */}
-      <div className="text-center text-sm text-muted-foreground">
+      <motion.div 
+        className="text-center text-sm text-muted-foreground"
+        layout
+        transition={{ 
+          duration: 0.3, 
+          ease: "easeOut",
+          type: "spring",
+          stiffness: 300,
+          damping: 30
+        }}
+      >
         <p className="mb-2">
           This is a keyboard-only dice roller. Use the shortcuts above to roll dice quickly.
         </p>
         <p>
           Press <kbd className="px-2 py-1 bg-muted rounded font-mono">?</kbd> for full keyboard shortcuts
         </p>
-      </div>
+      </motion.div>
 
       {/* Help Modal */}
       <HelpModal

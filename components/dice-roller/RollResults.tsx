@@ -31,91 +31,112 @@ export function RollResults({ result, className }: RollResultsProps) {
   }
 
   return (
-    <Card className={cn("p-6", className)}>
-      <div className="space-y-4">
-        {/* Prominent total display */}
-        <div className="text-center">
-          <motion.div
-            key={result.total}
-            initial={{ rotateZ: 0, scale: 0.3 }}
-            animate={{ rotateZ: 360, scale: 1 }}
+    <motion.div
+      layout
+      transition={{ 
+        duration: 0.3, 
+        ease: "easeOut",
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }}
+    >
+      <Card className={cn("p-6", className)}>
+        <div className="space-y-4">
+          {/* Prominent total display */}
+          <div className="text-center">
+            <motion.div
+              key={result.total}
+              initial={{ rotateZ: 0, scale: 0.3 }}
+              animate={{ rotateZ: 360, scale: 1 }}
+              transition={{ 
+                duration: 0.6, 
+                ease: "easeOut",
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+              }}
+              className="text-4xl font-bold"
+            >
+              {result.total}
+            </motion.div>
+          </div>
+
+          {/* Individual dice results */}
+          <motion.div 
+            className="flex flex-wrap gap-1.5 justify-center"
+            layout
             transition={{ 
-              duration: 0.6, 
+              duration: 0.3, 
               ease: "easeOut",
               type: "spring",
-              stiffness: 100,
-              damping: 15
+              stiffness: 300,
+              damping: 30
             }}
-            className="text-4xl font-bold"
           >
-            {result.total}
+            <AnimatePresence mode="popLayout">
+              {result.dice.map((die, index) => (
+                <motion.div
+                  key={`${die.type}-${index}-${result.timestamp.getTime()}`}
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    y: 0,
+                    transition: { 
+                      duration: 0.2, 
+                      ease: "easeOut",
+                      delay: index * 0.05 
+                    }
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    scale: 0.8, 
+                    y: -10,
+                    transition: { 
+                      duration: 0.2, 
+                      ease: "easeOut",
+                      delay: 0 
+                    }
+                  }}
+                  layout
+                >
+                  <DiceResultSegment die={die} />
+                </motion.div>
+              ))}
+              {result.modifier !== 0 && (
+                <motion.div
+                  key={`modifier-${result.modifier}-${result.timestamp.getTime()}`}
+                  initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                  animate={{ 
+                    opacity: 1, 
+                    scale: 1, 
+                    y: 0,
+                    transition: { 
+                      duration: 0.2, 
+                      ease: "easeOut",
+                      delay: result.dice.length * 0.05 
+                    }
+                  }}
+                  exit={{ 
+                    opacity: 0, 
+                    scale: 0.8, 
+                    y: -10,
+                    transition: { 
+                      duration: 0.2, 
+                      ease: "easeOut",
+                      delay: 0 
+                    }
+                  }}
+                  layout
+                >
+                  <DiceResultSegment modifier={result.modifier} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
-
-        {/* Individual dice results */}
-        <div className="flex flex-wrap gap-1.5 justify-center">
-          <AnimatePresence mode="popLayout">
-            {result.dice.map((die, index) => (
-              <motion.div
-                key={`${die.type}-${index}-${result.timestamp.getTime()}`}
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
-                  y: 0,
-                  transition: { 
-                    duration: 0.2, 
-                    ease: "easeOut",
-                    delay: index * 0.05 
-                  }
-                }}
-                exit={{ 
-                  opacity: 0, 
-                  scale: 0.8, 
-                  y: -10,
-                  transition: { 
-                    duration: 0.2, 
-                    ease: "easeOut",
-                    delay: 0 
-                  }
-                }}
-                layout
-              >
-                <DiceResultSegment die={die} />
-              </motion.div>
-            ))}
-            {result.modifier !== 0 && (
-              <motion.div
-                key={`modifier-${result.modifier}-${result.timestamp.getTime()}`}
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
-                  y: 0,
-                  transition: { 
-                    duration: 0.2, 
-                    ease: "easeOut",
-                    delay: result.dice.length * 0.05 
-                  }
-                }}
-                exit={{ 
-                  opacity: 0, 
-                  scale: 0.8, 
-                  y: -10,
-                  transition: { 
-                    duration: 0.2, 
-                    ease: "easeOut",
-                    delay: 0 
-                  }
-                }}
-                layout
-              >
-                <DiceResultSegment modifier={result.modifier} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-    </Card>
+      </Card>
+    </motion.div>
   );
 }
