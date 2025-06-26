@@ -1,6 +1,5 @@
 import { useEffect, useCallback } from 'react';
 import { DiceRollerState } from '@/lib/dice-types';
-import { DIE_SHORTCUTS } from '@/lib/dice-types';
 
 interface KeyboardActions {
   addDice: (dieType: any, quantity: number) => void;
@@ -31,8 +30,8 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
 
     // Prevent default for most keys we handle
     const handledKeys = [
-      ' ', 'enter', 'escape', 'backspace', 'h', 'r', 'c', '?',
-      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', 'd'
+      'enter', 'escape', 'backspace', 'r', 'c', '?',
+      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-'
     ];
     
     if (handledKeys.includes(key)) {
@@ -42,7 +41,6 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
 
     switch (key) {
       // Roll dice
-      case ' ':
       case 'enter':
         if (state.quickMode && state.dicePool.length === 0) {
           actions.rollQuickD20(1);
@@ -91,10 +89,6 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
         }
         break;
 
-      // Die type selection with D prefix
-      case 'd':
-        // Wait for next keypress to get die type
-        break;
 
       // Clear pool
       case 'escape':
@@ -117,10 +111,6 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
         actions.rerollLast();
         break;
 
-      // Toggle history
-      case 'h':
-        actions.toggleHistory();
-        break;
 
       // Toggle help
       case '?':
@@ -136,47 +126,12 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
     }
   }, [state, actions]);
 
-  // Handle D + number combinations
-  const handleDieCombination = useCallback((event: KeyboardEvent) => {
-    const key = event.key.toLowerCase();
-    
-    if (key === 'd') {
-      // Set up listener for next keypress
-      const handleNextKey = (nextEvent: KeyboardEvent) => {
-        const nextKey = nextEvent.key;
-        if (DIE_SHORTCUTS[nextKey]) {
-          const dieType = DIE_SHORTCUTS[nextKey];
-          if (event.shiftKey) {
-            // Just change die type
-            actions.setDieType(dieType);
-          } else {
-            // Add one die of this type
-            actions.addDice(dieType, 1);
-          }
-          nextEvent.preventDefault();
-        } else if (nextKey === 'd') {
-          // DD - return to d20 mode
-          actions.setDieType('d20');
-          actions.clearDicePool();
-          nextEvent.preventDefault();
-        }
-        document.removeEventListener('keydown', handleNextKey);
-      };
-      
-      document.addEventListener('keydown', handleNextKey);
-      setTimeout(() => {
-        document.removeEventListener('keydown', handleNextKey);
-      }, 1000); // Remove listener after 1 second
-    }
-  }, [actions]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);
-    document.addEventListener('keydown', handleDieCombination);
     
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
-      document.removeEventListener('keydown', handleDieCombination);
     };
-  }, [handleKeyPress, handleDieCombination]);
+  }, [handleKeyPress]);
 }
