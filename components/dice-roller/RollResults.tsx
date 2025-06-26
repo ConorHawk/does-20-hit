@@ -33,6 +33,7 @@ export function RollResults({ result, className }: RollResultsProps) {
   return (
     <motion.div
       layout
+      style={{ willChange: 'height' }}
       transition={{ 
         duration: 0.3, 
         ease: "easeOut",

@@ -119,4 +119,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    /* Prevent horizontal scrollbar flickering */
+    overflow-x: hidden;
+    /* Reserve space for vertical scrollbar to prevent layout shifts */
+    scrollbar-gutter: stable;
+  }
 }
