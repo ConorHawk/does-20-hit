@@ -201,6 +201,24 @@ export function useDiceRoller() {
     }));
   }, []);
 
+  const rerollFromHistory = useCallback((historyEntry: RollHistoryEntry) => {
+    const result = rollDicePoolUtil(historyEntry.result.dicePool, historyEntry.result.modifier);
+    
+    const newHistoryEntry: RollHistoryEntry = {
+      id: Date.now().toString(),
+      result,
+      displayText: formatRollResult(result),
+    };
+
+    setState(prev => ({
+      ...prev,
+      lastRoll: result,
+      history: [newHistoryEntry, ...prev.history.slice(0, 9)],
+    }));
+
+    return result;
+  }, []);
+
   return {
     state,
     actions: {
@@ -218,6 +236,7 @@ export function useDiceRoller() {
       setDieType,
       startModifierMode,
       loadHistoryRoll,
+      rerollFromHistory,
     },
   };
 }

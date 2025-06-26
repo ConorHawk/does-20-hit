@@ -111,7 +111,6 @@ export function useKeyboardShortcuts(state: DiceRollerState, actions: KeyboardAc
         actions.rerollLast();
         break;
 
-
       // Toggle help
       case '?':
         actions.toggleHelp();

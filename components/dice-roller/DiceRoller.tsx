@@ -1,7 +1,6 @@
 'use client';
 
-import { useDiceRoller } from '@/hooks/useDiceRoller';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useDiceRollerContext } from '@/components/dice-roller-provider';
 import { DicePool } from './DicePool';
 import { RollResults } from './RollResults';
 import { HelpModal } from './HelpModal';
@@ -12,10 +11,7 @@ interface DiceRollerProps {
 }
 
 export function DiceRoller({ className }: DiceRollerProps) {
-  const { state, actions } = useDiceRoller();
-  
-  // Set up keyboard shortcuts
-  useKeyboardShortcuts(state, actions);
+  const { state, actions } = useDiceRollerContext();
 
   return (
     <div className={cn("max-w-4xl mx-auto space-y-6", className)}>

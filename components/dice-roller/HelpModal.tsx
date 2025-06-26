@@ -95,6 +95,10 @@ export function HelpModal({ isOpen, onClose }: HelpModalProps) {
                 <kbd className="px-2 py-1 bg-muted rounded font-mono whitespace-nowrap">?</kbd>
                 <span className="ml-2">Toggle this help</span>
               </div>
+              <div className="flex justify-between items-center">
+                <kbd className="px-2 py-1 bg-muted rounded font-mono whitespace-nowrap">⌘ B</kbd>
+                <span className="ml-2">Toggle roll history sidebar</span>
+              </div>
             </div>
           </section>
 
