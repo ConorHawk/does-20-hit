@@ -49,11 +49,3 @@ export const DIE_FACES: Record<DieType, number> = {
   'd100': 100,
 };
 
-export const DIE_SHORTCUTS: Record<string, DieType> = {
-  '4': 'd4',
-  '6': 'd6',
-  '8': 'd8',
-  '1': 'd10',
-  '2': 'd12',
-  '0': 'd100',
-};
