@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { DieType } from "@/lib/dice-types";
 import { cn } from "@/lib/utils";
 import { DicePoolDisplay } from "./DicePoolDisplay";
+import Image from "next/image";
 
 interface DicePoolProps {
   dicePool: DieType[];
@@ -44,11 +45,22 @@ export function DicePool({
             </>
           ) : (
             <>
-              Press{" "}
-              <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-                ENTER
-              </kbd>{" "}
-              for 1d20
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <Image
+                  src="/icons/dice/dice-d20-light.svg"
+                  alt="d20 die"
+                  width={24}
+                  height={24}
+                  className="opacity-70"
+                />
+                <span>
+                  Press{" "}
+                  <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
+                    ENTER
+                  </kbd>{" "}
+                  for 1d20
+                </span>
+              </div>
               {modifier !== 0 && (
                 <div className="text-sm text-muted-foreground mt-2">
                   Current modifier: {modifierText}

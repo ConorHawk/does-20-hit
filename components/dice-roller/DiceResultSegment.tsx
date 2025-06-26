@@ -16,14 +16,14 @@ export function DiceResultSegment({
 }: DiceResultSegmentProps) {
   const sizeClasses = {
     sm: {
-      container: "px-2 py-1",
-      icon: 12,
-      text: "text-sm",
+      container: "px-1.5 py-0.5",
+      icon: 10,
+      text: "text-xs",
     },
     md: {
-      container: "px-3 py-2",
-      icon: 18,
-      text: "text-base",
+      container: "px-2 py-1",
+      icon: 14,
+      text: "text-sm",
     },
   };
 
@@ -34,7 +34,7 @@ export function DiceResultSegment({
     return (
       <div
         className={cn(
-          "inline-flex items-center gap-2 rounded-lg border-2",
+          "inline-flex items-center gap-2 rounded-lg border",
           sizeConfig.container,
           "bg-muted border-muted-foreground/20"
         )}
@@ -53,7 +53,7 @@ export function DiceResultSegment({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-lg border-2",
+        "inline-flex items-center gap-2 rounded-lg border",
         sizeConfig.container,
         die.isCrit &&
           "bg-green-100 border-green-500 dark:bg-green-900 dark:border-green-400",
