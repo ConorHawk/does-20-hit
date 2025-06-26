@@ -42,6 +42,7 @@ export interface DiceRollerState {
   lastRoll: RollResult | null;
   history: RollHistoryEntry[];
   favorites: FavoriteRoll[];
+  hotbarSlots: (FavoriteRoll | null)[];
   isHistoryVisible: boolean;
   isHelpVisible: boolean;
   quickMode: boolean;

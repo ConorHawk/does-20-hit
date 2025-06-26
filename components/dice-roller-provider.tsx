@@ -20,7 +20,10 @@ export function DiceRollerProvider({ children }: { children: ReactNode }) {
   // Set up keyboard shortcuts at the provider level
   useKeyboardShortcuts({
     state: diceRollerData.state,
-    actions: diceRollerData.actions,
+    actions: {
+      ...diceRollerData.actions,
+      rollFromHotbarSlot: diceRollerData.actions.rollFromHotbarSlot,
+    },
     onOpenSaveFavoriteModal: () => setIsSaveFavoriteModalOpen(true),
   });
 

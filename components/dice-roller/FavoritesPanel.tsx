@@ -39,7 +39,7 @@ export function FavoritesPanel({
         </div>
         
         <div className="space-y-2">
-          {favorites.map((favorite, index) => (
+          {favorites.map((favorite) => (
             <div
               key={favorite.id}
               className="flex items-center justify-between p-2 rounded-lg border hover:bg-muted/50 transition-colors"
@@ -62,7 +62,7 @@ export function FavoritesPanel({
                   variant="ghost"
                   onClick={() => onRollFavorite(favorite)}
                   className="h-8 w-8 p-0"
-                  title={`Roll ${favorite.name} (${['Q','W','E','R','T','Y','U','I','O'][index] || ''})`}
+                  title={`Roll ${favorite.name}`}
                 >
                   <Play className="h-3 w-3" />
                 </Button>
@@ -81,7 +81,7 @@ export function FavoritesPanel({
         </div>
         
         <div className="text-xs text-muted-foreground text-center pt-2 border-t">
-          Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Q-W-E-R-T-Y-U-I-O</kbd> for quick roll
+          Assign favorites to hotbar slots for quick access
         </div>
       </div>
     </Card>

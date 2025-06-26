@@ -77,6 +77,27 @@ export function HelpModal({ isOpen, onClose }: HelpModalProps) {
           </section>
 
           <section>
+            <h3 className="text-lg font-semibold mb-3">Hotbar & Favorites</h3>
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">Save favorite dice combinations and assign them to the hotbar for quick access.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="flex justify-between items-center">
+                  <kbd className="px-2 py-1 bg-muted rounded font-mono whitespace-nowrap">F</kbd>
+                  <span className="ml-2">Save current roll as favorite</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <kbd className="px-2 py-1 bg-muted rounded font-mono whitespace-nowrap">Q-W-E-R-T-Y-U-I-O</kbd>
+                  <span className="ml-2">Roll from hotbar slots</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Right-click hotbar slot</span>
+                  <span className="ml-2">Assign favorite to slot</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
             <h3 className="text-lg font-semibold mb-3">Other Actions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
               <div className="flex justify-between items-center">

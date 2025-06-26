@@ -5,11 +5,23 @@ import Image from 'next/image';
 interface DicePoolDisplayProps {
   dicePool: DiceGroup[];
   modifier: number;
+  compact?: boolean;
 }
 
-export function DicePoolDisplay({ dicePool, modifier }: DicePoolDisplayProps) {
+export function DicePoolDisplay({ dicePool, modifier, compact = false }: DicePoolDisplayProps) {
   if (dicePool.length === 0 && modifier === 0) {
     return <span className="text-muted-foreground">Empty</span>;
+  }
+
+  if (compact) {
+    const diceText = dicePool.map(group => 
+      `${group.quantity}${group.type}`
+    ).join(' + ');
+    
+    const modifierText = modifier !== 0 ? 
+      ` ${modifier > 0 ? '+' : ''}${modifier}` : '';
+    
+    return <span className="font-mono text-xs">{diceText}{modifierText}</span>;
   }
 
   return (

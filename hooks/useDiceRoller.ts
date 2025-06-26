@@ -10,26 +10,33 @@ const initialState: DiceRollerState = {
   lastRoll: null,
   history: [],
   favorites: [],
+  hotbarSlots: Array(9).fill(null),
   isHistoryVisible: false,
   isHelpVisible: false,
   quickMode: true,
 };
 
 const FAVORITES_STORAGE_KEY = 'dice-roller-favorites';
+const HOTBAR_STORAGE_KEY = 'dice-roller-hotbar';
 
 export function useDiceRoller() {
   const [state, setState] = useState<DiceRollerState>(initialState);
 
-  // Load favorites from localStorage on mount
+  // Load favorites and hotbar from localStorage on mount
   useEffect(() => {
     try {
       const storedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
-      if (storedFavorites) {
-        const favorites = JSON.parse(storedFavorites) as FavoriteRoll[];
-        setState(prev => ({ ...prev, favorites }));
+      const storedHotbar = localStorage.getItem(HOTBAR_STORAGE_KEY);
+      
+      if (storedFavorites || storedHotbar) {
+        setState(prev => ({
+          ...prev,
+          ...(storedFavorites && { favorites: JSON.parse(storedFavorites) as FavoriteRoll[] }),
+          ...(storedHotbar && { hotbarSlots: JSON.parse(storedHotbar) as (FavoriteRoll | null)[] }),
+        }));
       }
     } catch (error) {
-      console.warn('Failed to load favorites from localStorage:', error);
+      console.warn('Failed to load data from localStorage:', error);
     }
   }, []);
 
@@ -41,6 +48,15 @@ export function useDiceRoller() {
       console.warn('Failed to save favorites to localStorage:', error);
     }
   }, [state.favorites]);
+
+  // Save hotbar to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(HOTBAR_STORAGE_KEY, JSON.stringify(state.hotbarSlots));
+    } catch (error) {
+      console.warn('Failed to save hotbar to localStorage:', error);
+    }
+  }, [state.hotbarSlots]);
 
   const addDice = useCallback((dieType: DieType, quantity: number) => {
     setState(prev => ({
@@ -282,8 +298,47 @@ export function useDiceRoller() {
     setState(prev => ({
       ...prev,
       favorites: prev.favorites.filter(fav => fav.id !== favoriteId),
+      hotbarSlots: prev.hotbarSlots.map(slot => 
+        slot?.id === favoriteId ? null : slot
+      ),
     }));
   }, []);
+
+  const assignToHotbarSlot = useCallback((slotIndex: number, favoriteId: string) => {
+    setState(prev => {
+      const favorite = prev.favorites.find(fav => fav.id === favoriteId);
+      if (!favorite || slotIndex < 0 || slotIndex >= 9) return prev;
+
+      const newSlots = [...prev.hotbarSlots];
+      newSlots[slotIndex] = favorite;
+      
+      return {
+        ...prev,
+        hotbarSlots: newSlots,
+      };
+    });
+  }, []);
+
+  const clearHotbarSlot = useCallback((slotIndex: number) => {
+    setState(prev => {
+      if (slotIndex < 0 || slotIndex >= 9) return prev;
+
+      const newSlots = [...prev.hotbarSlots];
+      newSlots[slotIndex] = null;
+      
+      return {
+        ...prev,
+        hotbarSlots: newSlots,
+      };
+    });
+  }, []);
+
+  const rollFromHotbarSlot = useCallback((slotIndex: number) => {
+    const favorite = state.hotbarSlots[slotIndex];
+    if (!favorite) return null;
+    
+    return rollFromFavorite(favorite);
+  }, [state.hotbarSlots, rollFromFavorite]);
 
   return {
     state,
@@ -306,6 +361,9 @@ export function useDiceRoller() {
       saveFavorite,
       rollFromFavorite,
       deleteFavorite,
+      assignToHotbarSlot,
+      clearHotbarSlot,
+      rollFromHotbarSlot,
     },
   };
 }

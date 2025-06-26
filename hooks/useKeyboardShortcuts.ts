@@ -16,6 +16,7 @@ interface KeyboardActions {
   setDieType: (dieType: any) => void;
   startModifierMode: (isNegative?: boolean) => void;
   rollFromFavorite: (favorite: FavoriteRoll) => void;
+  rollFromHotbarSlot: (slotIndex: number) => void;
 }
 
 interface UseKeyboardShortcutsProps {
@@ -39,7 +40,7 @@ export function useKeyboardShortcuts({ state, actions, onOpenSaveFavoriteModal }
     // Prevent default for keys we handle
     const handledKeys = [
       'enter', 'escape', 'backspace', 'r', 'c', '?', 'f',
-      'q', 'w', 'e', 't', 'y', 'u', 'i', 'o' // Favorites keys
+      'q', 'w', 'e', 't', 'y', 'u', 'i', 'o' // Hotbar keys
     ];
     
     // Only prevent default for number keys if not using Alt modifier  
@@ -92,7 +93,7 @@ export function useKeyboardShortcuts({ state, actions, onOpenSaveFavoriteModal }
         }
         break;
 
-      // Favorites shortcuts using Q-W-E-R-T-Y-U-I-O
+      // Hotbar shortcuts using Q-W-E-R-T-Y-U-I-O
       case 'q':
       case 'w':
       case 'e':
@@ -102,15 +103,13 @@ export function useKeyboardShortcuts({ state, actions, onOpenSaveFavoriteModal }
       case 'u':
       case 'i':
       case 'o':
-        const favoriteKeyMap: Record<string, number> = {
+        const hotbarKeyMap: Record<string, number> = {
           'q': 0, 'w': 1, 'e': 2, 'r': 3, 't': 4,
           'y': 5, 'u': 6, 'i': 7, 'o': 8
         };
         
-        const favoriteIndex = favoriteKeyMap[key];
-        if (favoriteIndex < state.favorites.length) {
-          actions.rollFromFavorite(state.favorites[favoriteIndex]);
-        }
+        const slotIndex = hotbarKeyMap[key];
+        actions.rollFromHotbarSlot(slotIndex);
         break;
 
       // Negative modifier
