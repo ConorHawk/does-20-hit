@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card";
 import { RollResult } from "@/lib/dice-types";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import NumberFlow from "@number-flow/react";
 import { DiceResultSegment } from "./DiceResultSegment";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -36,14 +35,21 @@ export function RollResults({ result, className }: RollResultsProps) {
       <div className="space-y-4">
         {/* Prominent total display */}
         <div className="text-center">
-          <NumberFlow
-            value={result.total}
+          <motion.div
+            key={result.total}
+            initial={{ rotateZ: 0, scale: 0.3 }}
+            animate={{ rotateZ: 360, scale: 1 }}
+            transition={{ 
+              duration: 0.6, 
+              ease: "easeOut",
+              type: "spring",
+              stiffness: 100,
+              damping: 15
+            }}
             className="text-4xl font-bold"
-            respectMotionPreference={true}
-            transformTiming={{ duration: 250, easing: "ease-out" }}
-            spinTiming={{ duration: 250, easing: "ease-out" }}
-            opacityTiming={{ duration: 100, easing: "ease-out" }}
-          />
+          >
+            {result.total}
+          </motion.div>
         </div>
 
         {/* Individual dice results */}
