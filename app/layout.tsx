@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { DiceRollerProvider } from "@/components/dice-roller-provider";
+import Image from "next/image";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Does 20 Hit?",
   description: "A keyboard-only dice roller for tabletop RPGs",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -34,7 +38,14 @@ export default function RootLayout({
           <SidebarProvider>
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-                <div className="flex-1">
+                <div className="flex-1 flex items-center gap-3">
+                  <Image
+                    src="/icons/dice/dice-d20-light.svg"
+                    alt="D20 die logo"
+                    width={28}
+                    height={28}
+                    className="opacity-80"
+                  />
                   <h1 className="text-lg font-semibold">Does 20 Hit?</h1>
                 </div>
                 <SidebarTrigger className="-mr-1" />

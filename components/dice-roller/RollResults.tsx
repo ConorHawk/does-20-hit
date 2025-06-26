@@ -1,8 +1,10 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { RollResult, DieType } from '@/lib/dice-types';
+import { RollResult } from '@/lib/dice-types';
 import { cn } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
+import Image from 'next/image';
+import { DiceResultSegment } from './DiceResultSegment';
 
 interface RollResultsProps {
   result: RollResult | null;
@@ -14,21 +16,22 @@ export function RollResults({ result, onReroll, className }: RollResultsProps) {
   if (!result) {
     return (
       <Card className={cn("p-6 text-center", className)}>
-        <div className="text-muted-foreground">
-          No rolls yet. Press keys to start rolling!
+        <div className="flex flex-col items-center gap-3">
+          <Image
+            src="/icons/dice/dice-d20-light.svg"
+            alt="D20 die"
+            width={48}
+            height={48}
+            className="opacity-30"
+          />
+          <div className="text-muted-foreground">
+            No rolls yet. Press keys to start rolling!
+          </div>
         </div>
       </Card>
     );
   }
 
-  // Group dice by type for display
-  const diceByType = result.dice.reduce((acc, die) => {
-    if (!acc[die.type]) {
-      acc[die.type] = [];
-    }
-    acc[die.type].push(die);
-    return acc;
-  }, {} as Record<DieType, typeof result.dice>);
 
   return (
     <Card className={cn("p-6", className)}>
@@ -47,26 +50,9 @@ export function RollResults({ result, onReroll, className }: RollResultsProps) {
         </div>
 
         {/* Individual dice results */}
-        <div className="space-y-2">
-          {Object.entries(diceByType).map(([dieType, dice]) => (
-            <div key={dieType} className="flex items-center gap-2">
-              <span className="text-sm font-medium min-w-[40px]">{dieType}:</span>
-              <div className="flex flex-wrap gap-1">
-                {dice.map((die, index) => (
-                  <span
-                    key={index}
-                    className={cn(
-                      "inline-flex items-center justify-center w-8 h-8 text-sm font-bold rounded border-2",
-                      die.isCrit && "bg-green-100 border-green-500 text-green-800 dark:bg-green-900 dark:border-green-400 dark:text-green-200",
-                      die.isFail && "bg-red-100 border-red-500 text-red-800 dark:bg-red-900 dark:border-red-400 dark:text-red-200",
-                      !die.isCrit && !die.isFail && "bg-muted border-muted-foreground/20"
-                    )}
-                  >
-                    {die.value}
-                  </span>
-                ))}
-              </div>
-            </div>
+        <div className="flex flex-wrap gap-3">
+          {result.dice.map((die, index) => (
+            <DiceResultSegment key={index} die={die} />
           ))}
         </div>
 

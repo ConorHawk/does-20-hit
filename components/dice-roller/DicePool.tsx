@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { DiceGroup } from '@/lib/dice-types';
-import { formatDicePool } from '@/lib/dice-utils';
 import { cn } from '@/lib/utils';
+import { DicePoolDisplay } from './DicePoolDisplay';
 
 interface DicePoolProps {
   dicePool: DiceGroup[];
@@ -12,7 +12,6 @@ interface DicePoolProps {
 }
 
 export function DicePool({ dicePool, modifier, pendingModifier, quickMode, className }: DicePoolProps) {
-  const poolText = formatDicePool(dicePool);
   const modifierText = modifier !== 0 
     ? ` ${modifier > 0 ? '+' : ''}${modifier}` 
     : '';
@@ -48,8 +47,9 @@ export function DicePool({ dicePool, modifier, pendingModifier, quickMode, class
   return (
     <Card className={cn("p-6", className)}>
       <div className="text-center">
-        <div className="text-2xl font-bold mb-2">
-          Dice Pool: {poolText}{modifierText}
+        <div className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+          <span>Dice Pool:</span>
+          <DicePoolDisplay dicePool={dicePool} modifier={modifier} />
         </div>
         <div className="text-sm text-muted-foreground">
           Press <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">SPACE</kbd> to roll pool • <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">⌘+Number</kbd> to add dice • <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">Numbers</kbd> for modifier

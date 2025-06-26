@@ -1,10 +1,11 @@
 "use client";
 
 import { Clock, History, RotateCcw } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { RollHistoryEntry, DieType } from "@/lib/dice-types";
+import { RollHistoryEntry } from "@/lib/dice-types";
 import { useDiceRollerContext } from "@/components/dice-roller-provider";
+import Image from "next/image";
+import { DiceResultSegment } from "@/components/dice-roller/DiceResultSegment";
 import {
   Sidebar,
   SidebarContent,
@@ -20,15 +21,6 @@ export function AppSidebar() {
 
   const renderHistoryEntry = (entry: RollHistoryEntry) => {
     const result = entry.result;
-    
-    // Group dice by type for display
-    const diceByType = result.dice.reduce((acc, die) => {
-      if (!acc[die.type]) {
-        acc[die.type] = [];
-      }
-      acc[die.type].push(die);
-      return acc;
-    }, {} as Record<DieType, typeof result.dice>);
 
     return (
       <div key={entry.id} className="p-3 space-y-2 border rounded-lg bg-background/50">
@@ -43,28 +35,9 @@ export function AppSidebar() {
         </div>
 
         {/* Individual dice results */}
-        <div className="space-y-1">
-          {Object.entries(diceByType).map(([dieType, dice]) => (
-            <div key={dieType} className="flex flex-col gap-1">
-              <span className="text-xs font-medium text-muted-foreground">
-                {dieType}:
-              </span>
-              <div className="flex flex-wrap gap-1">
-                {dice.map((die, dieIndex) => (
-                  <span
-                    key={dieIndex}
-                    className={cn(
-                      "inline-flex items-center justify-center w-6 h-6 text-xs font-bold rounded border",
-                      die.isCrit && "bg-green-100 border-green-500 text-green-800 dark:bg-green-900 dark:border-green-400 dark:text-green-200",
-                      die.isFail && "bg-red-100 border-red-500 text-red-800 dark:bg-red-900 dark:border-red-400 dark:text-red-200",
-                      !die.isCrit && !die.isFail && "bg-muted border-muted-foreground/20 text-muted-foreground"
-                    )}
-                  >
-                    {die.value}
-                  </span>
-                ))}
-              </div>
-            </div>
+        <div className="flex flex-wrap gap-1">
+          {result.dice.map((die, index) => (
+            <DiceResultSegment key={index} die={die} size="sm" />
           ))}
         </div>
 
@@ -108,9 +81,20 @@ export function AppSidebar() {
         <div className="px-3 py-2">
           {state.history.length === 0 ? (
             <div className="p-6 text-center text-muted-foreground">
-              <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No rolls yet</p>
-              <p className="text-xs">Your roll history will appear here</p>
+              <div className="flex flex-col items-center gap-3">
+                <Clock className="h-8 w-8 opacity-50" />
+                <Image
+                  src="/icons/dice/dice-d6-light.svg"
+                  alt="D6 die"
+                  width={32}
+                  height={32}
+                  className="opacity-20"
+                />
+                <div>
+                  <p className="text-sm">No rolls yet</p>
+                  <p className="text-xs">Your roll history will appear here</p>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="space-y-2">
