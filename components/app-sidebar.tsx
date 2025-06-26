@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, History, RotateCcw, Star, Plus } from "lucide-react";
+import { Clock, History, RotateCcw, Star, Plus, ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RollHistoryEntry } from "@/lib/dice-types";
 import { useDiceRollerContext } from "@/components/dice-roller-provider";
@@ -19,12 +20,17 @@ import {
 
 export function AppSidebar() {
   const { state, actions } = useDiceRollerContext();
+  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(true);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
 
   const renderHistoryEntry = (entry: RollHistoryEntry) => {
     const result = entry.result;
 
     return (
-      <div key={entry.id} className="p-3 space-y-2 border rounded-lg bg-background/50">
+      <div
+        key={entry.id}
+        className="p-3 space-y-2 border rounded-lg bg-background/50"
+      >
         {/* Timestamp and formula */}
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">
@@ -44,9 +50,7 @@ export function AppSidebar() {
 
         {/* Total and Reroll button */}
         <div className="flex items-center justify-between pt-2 border-t">
-          <span className="font-bold text-sm">
-            Total: {result.total}
-          </span>
+          <span className="font-bold text-sm">Total: {result.total}</span>
           <Button
             variant="ghost"
             size="sm"
@@ -66,13 +70,20 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <History className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Rolls & Favorites</span>
-                <span className="truncate text-xs">History and saved rolls</span>
+                <span className="truncate font-semibold">
+                  Rolls & Favorites
+                </span>
+                <span className="truncate text-xs">
+                  History and saved rolls
+                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -82,58 +93,74 @@ export function AppSidebar() {
         <div className="px-3 py-2 space-y-4">
           {/* Favorites Section */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium flex items-center gap-2">
+            <button
+              onClick={() => setIsFavoritesExpanded(!isFavoritesExpanded)}
+              className="w-full text-sm font-medium flex items-center justify-between hover:bg-muted/50 hover:text-foreground rounded-md px-2 py-1 transition-colors"
+            >
+              <div className="flex items-center gap-2">
                 <Star className="h-4 w-4" />
                 Favorites
-              </h3>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => actions.saveFavorite(`Roll ${state.favorites.length + 1}`)}
-                disabled={state.dicePool.length === 0 && state.modifier === 0}
-                className="h-6 px-2"
-                title="Save current roll as favorite (F)"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-            
-            <FavoritesPanel
-              favorites={state.favorites}
-              onRollFavorite={actions.rollFromFavorite}
-              onDeleteFavorite={actions.deleteFavorite}
-            />
+              </div>
+              {isFavoritesExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
+            </button>
+
+            {isFavoritesExpanded && (
+              <FavoritesPanel
+                favorites={state.favorites}
+                onRollFavorite={actions.rollFromFavorite}
+                onDeleteFavorite={actions.deleteFavorite}
+              />
+            )}
           </div>
 
           {/* History Section */}
           <div className="space-y-2">
-            <h3 className="text-sm font-medium flex items-center gap-2">
-              <History className="h-4 w-4" />
-              History
-            </h3>
-            
-            {state.history.length === 0 ? (
-              <div className="p-6 text-center text-muted-foreground">
-                <div className="flex flex-col items-center gap-3">
-                  <Clock className="h-8 w-8 opacity-50" />
-                  <Image
-                    src="/icons/dice/dice-d6-light.svg"
-                    alt="D6 die"
-                    width={32}
-                    height={32}
-                    className="opacity-20"
-                  />
-                  <div>
-                    <p className="text-sm">No rolls yet</p>
-                    <p className="text-xs">Your roll history will appear here</p>
+            <button
+              onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
+              className="w-full text-sm font-medium flex items-center justify-between hover:bg-muted/50 hover:text-foreground rounded-md px-2 py-1 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <History className="h-4 w-4" />
+                History
+              </div>
+              {isHistoryExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
+            </button>
+
+            {isHistoryExpanded && (
+              <>
+                {state.history.length === 0 ? (
+                  <div className="p-6 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center gap-3">
+                      <Clock className="h-8 w-8 opacity-50" />
+                      <Image
+                        src="/icons/dice/dice-d6-light.svg"
+                        alt="D6 die"
+                        width={32}
+                        height={32}
+                        className="opacity-20"
+                      />
+                      <div>
+                        <p className="text-sm">No rolls yet</p>
+                        <p className="text-xs">
+                          Your roll history will appear here
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {state.history.map((entry) => renderHistoryEntry(entry))}
-              </div>
+                ) : (
+                  <div className="space-y-2">
+                    {state.history.map((entry) => renderHistoryEntry(entry))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

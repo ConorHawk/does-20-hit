@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { FavoriteRoll } from "@/lib/dice-types";
 import { DicePoolDisplay } from "./DicePoolDisplay";
 import { Trash2, Play } from "lucide-react";
@@ -20,70 +19,59 @@ export function FavoritesPanel({
 }: FavoritesPanelProps) {
   if (favorites.length === 0) {
     return (
-      <Card className={cn("p-4", className)}>
-        <div className="text-center text-muted-foreground">
-          <div className="text-sm">No favorites saved</div>
-          <div className="text-xs mt-1">
-            Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">F</kbd> to save current roll
-          </div>
+      <div className={cn("text-center text-muted-foreground", className)}>
+        <div className="text-sm">No favorites saved</div>
+        <div className="text-xs mt-1">
+          Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">F</kbd> to
+          save current roll
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className={cn("p-4", className)}>
-      <div className="space-y-3">
-        <div className="text-sm font-medium text-muted-foreground">
-          Favorites
-        </div>
-        
-        <div className="space-y-2">
-          {favorites.map((favorite) => (
-            <div
-              key={favorite.id}
-              className="flex items-center justify-between p-2 rounded-lg border hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium truncate mb-1">
-                  {favorite.name}
-                </div>
-                <div className="flex items-center gap-1">
-                  <DicePoolDisplay 
-                    dicePool={favorite.dicePool} 
-                    modifier={favorite.modifier} 
-                  />
-                </div>
+    <div className={cn("space-y-3", className)}>
+      <div className="space-y-2">
+        {favorites.map((favorite) => (
+          <div
+            key={favorite.id}
+            className="bg-white flex items-center justify-between p-2 rounded-lg border"
+          >
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium truncate mb-1">
+                {favorite.name}
               </div>
-              
-              <div className="flex items-center gap-1 ml-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => onRollFavorite(favorite)}
-                  className="h-8 w-8 p-0"
-                  title={`Roll ${favorite.name}`}
-                >
-                  <Play className="h-3 w-3" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => onDeleteFavorite(favorite.id)}
-                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                  title="Delete favorite"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+              <div className="flex items-center gap-1">
+                <DicePoolDisplay
+                  dicePool={favorite.dicePool}
+                  modifier={favorite.modifier}
+                />
               </div>
             </div>
-          ))}
-        </div>
-        
-        <div className="text-xs text-muted-foreground text-center pt-2 border-t">
-          Assign favorites to hotbar slots for quick access
-        </div>
+
+            <div className="flex items-center gap-1 ml-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onRollFavorite(favorite)}
+                className="h-8 w-8 p-0"
+                title={`Roll ${favorite.name}`}
+              >
+                <Play className="h-3 w-3" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => onDeleteFavorite(favorite.id)}
+                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                title="Delete favorite"
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
-    </Card>
+    </div>
   );
 }
