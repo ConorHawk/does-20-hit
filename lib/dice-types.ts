@@ -17,6 +17,7 @@ export interface RollResult {
   subtotal: number;
   modifier: number;
   total: number;
+  averageTotal: number;
   timestamp: Date;
   dicePool: DiceGroup[];
 }

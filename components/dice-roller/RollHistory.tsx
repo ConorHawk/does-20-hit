@@ -85,9 +85,24 @@ export function RollHistory({ history, onReroll, className }: RollHistoryProps) 
 
                 {/* Total and Reroll button */}
                 <div className="flex items-center justify-between pt-2 border-t">
-                  <span className="font-bold text-sm">
-                    Total: {result.total}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-sm">
+                      Total: {result.total}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <span>avg: {result.averageTotal}</span>
+                      <span className={cn(
+                        "text-xs",
+                        result.total > result.averageTotal ? "text-green-600" : 
+                        result.total < result.averageTotal ? "text-red-600" : 
+                        "text-muted-foreground"
+                      )}>
+                        {result.total > result.averageTotal ? "↑" : 
+                         result.total < result.averageTotal ? "↓" : 
+                         "−"}
+                      </span>
+                    </span>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"

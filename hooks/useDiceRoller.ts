@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { DiceRollerState, DieType, RollResult, RollHistoryEntry, FavoriteRoll, InputAction } from '@/lib/dice-types';
-import { rollDicePool as rollDicePoolUtil, rollDice, addDiceToPool, removeLastDieFromPool, formatRollResult } from '@/lib/dice-utils';
+import { rollDicePool as rollDicePoolUtil, rollDice, addDiceToPool, removeLastDieFromPool, formatRollResult, calculateAverageTotal } from '@/lib/dice-utils';
 
 const initialState: DiceRollerState = {
   currentDieType: 'd20',
@@ -130,12 +130,15 @@ export function useDiceRoller() {
     const rolls = rollDice('d20', quantity);
     const subtotal = rolls.reduce((sum, roll) => sum + roll.value, 0);
     const total = subtotal + state.modifier;
+    const dicePool = Array(quantity).fill('d20') as DieType[];
+    const averageTotal = calculateAverageTotal(dicePool, state.modifier);
     
     const result: RollResult = {
       dice: rolls,
       subtotal,
       modifier: state.modifier,
       total,
+      averageTotal,
       timestamp: new Date(),
       dicePool: [{ type: 'd20', quantity }],
     };

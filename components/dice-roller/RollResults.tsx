@@ -61,6 +61,29 @@ export function RollResults({ result, className }: RollResultsProps) {
             >
               {result.total}
             </motion.div>
+            <motion.div
+              key={`avg-${result.total}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.4, 
+                ease: "easeOut",
+                delay: 0.3
+              }}
+              className="text-sm text-muted-foreground flex items-center justify-center gap-1"
+            >
+              <span>avg: {result.averageTotal}</span>
+              <span className={cn(
+                "text-xs",
+                result.total > result.averageTotal ? "text-green-600" : 
+                result.total < result.averageTotal ? "text-red-600" : 
+                "text-muted-foreground"
+              )}>
+                {result.total > result.averageTotal ? "↑" : 
+                 result.total < result.averageTotal ? "↓" : 
+                 "−"}
+              </span>
+            </motion.div>
           </div>
 
           {/* Individual dice results */}

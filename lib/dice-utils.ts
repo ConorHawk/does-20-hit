@@ -35,6 +35,7 @@ export function rollDicePool(dicePool: DieType[], modifier: number = 0): RollRes
   
   const subtotal = allRolls.reduce((sum, roll) => sum + roll.value, 0);
   const total = subtotal + modifier;
+  const averageTotal = calculateAverageTotal(dicePool, modifier);
   
   const dicePoolGroups = groupDiceByType(dicePool.map(type => ({ type, quantity: 1 })));
   
@@ -43,6 +44,7 @@ export function rollDicePool(dicePool: DieType[], modifier: number = 0): RollRes
     subtotal,
     modifier,
     total,
+    averageTotal,
     timestamp: new Date(),
     dicePool: dicePoolGroups,
   };
@@ -80,6 +82,16 @@ export function formatRollResult(result: RollResult): string {
 export function calculateTotal(rolls: DieRoll[], modifier: number): number {
   const subtotal = rolls.reduce((sum, roll) => sum + roll.value, 0);
   return subtotal + modifier;
+}
+
+export function calculateAverageTotal(dicePool: DieType[], modifier: number): number {
+  const diceAverage = dicePool.reduce((sum, dieType) => {
+    const faces = DIE_FACES[dieType];
+    const average = (1 + faces) / 2;
+    return sum + average;
+  }, 0);
+  
+  return Math.round((diceAverage + modifier) * 10) / 10;
 }
 
 export function groupDiceByType(dicePool: DiceGroup[]): DiceGroup[] {
