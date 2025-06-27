@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { DieType } from '@/lib/dice-types';
 import { cn } from '@/lib/utils';
+import { Kbd } from '@/components/ui/kbd';
 
 interface QuickReferenceProps {
   currentDieType: DieType;
@@ -26,18 +27,18 @@ export function QuickReference({ currentDieType, quickMode, modifier, className 
         <div className="flex items-center gap-6 text-xs text-muted-foreground">
           {quickMode ? (
             <>
-              <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">SPACE</kbd>=1d20</span>
-              <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">5</kbd>=+5 modifier</span>
-              <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">⌘1-7</kbd>=Add dice</span>
+              <span><Kbd>SPACE</Kbd>=1d20</span>
+              <span><Kbd>5</Kbd>=+5 modifier</span>
+              <span><Kbd compound>⌘1-7</Kbd>=Add dice</span>
             </>
           ) : (
             <>
-              <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">SPACE</kbd>=Roll</span>
-              <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">5</kbd>=+5 modifier</span>
-              <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">ESC</kbd>=Clear</span>
+              <span><Kbd>SPACE</Kbd>=Roll</span>
+              <span><Kbd>5</Kbd>=+5 modifier</span>
+              <span><Kbd>ESC</Kbd>=Clear</span>
             </>
           )}
-          <span><kbd className="px-1 py-0.5 bg-background rounded font-mono">?</kbd>=Help</span>
+          <span><Kbd tooltip="Show keyboard shortcuts">?</Kbd>=Help</span>
         </div>
       </div>
     </Card>

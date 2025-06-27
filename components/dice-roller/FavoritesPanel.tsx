@@ -3,6 +3,7 @@ import { FavoriteRoll } from "@/lib/dice-types";
 import { DicePoolDisplay } from "./DicePoolDisplay";
 import { Trash2, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Kbd } from "@/components/ui/kbd";
 
 interface FavoritesPanelProps {
   favorites: FavoriteRoll[];
@@ -22,7 +23,7 @@ export function FavoritesPanel({
       <div className={cn("text-center text-muted-foreground", className)}>
         <div className="text-sm">No favorites saved</div>
         <div className="text-xs mt-1">
-          Press <kbd className="px-1 py-0.5 bg-muted rounded text-xs">F</kbd> to
+          Press <Kbd tooltip="Save the current dice roll as a favorite">F</Kbd> to
           save current roll
         </div>
       </div>

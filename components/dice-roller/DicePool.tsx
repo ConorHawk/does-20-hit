@@ -3,6 +3,7 @@ import { DieType } from "@/lib/dice-types";
 import { cn } from "@/lib/utils";
 import { DicePoolDisplay } from "./DicePoolDisplay";
 import Image from "next/image";
+import { Kbd } from "@/components/ui/kbd";
 
 interface DicePoolProps {
   dicePool: DieType[];
@@ -33,13 +34,9 @@ export function DicePool({
               </div>
               <div className="text-sm mt-2">
                 Press{" "}
-                <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-                  ENTER
-                </kbd>{" "}
+                <Kbd tooltip="Roll the dice pool">ENTER</Kbd>{" "}
                 to roll •{" "}
-                <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-                  BACKSPACE
-                </kbd>{" "}
+                <Kbd tooltip="Edit modifier or remove last die">BACKSPACE</Kbd>{" "}
                 to edit
               </div>
             </>
@@ -55,9 +52,7 @@ export function DicePool({
                 />
                 <span>
                   Press{" "}
-                  <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-                    ENTER
-                  </kbd>{" "}
+                  <Kbd tooltip="Roll a single d20">ENTER</Kbd>{" "}
                   for 1d20
                 </span>
               </div>
@@ -84,17 +79,11 @@ export function DicePool({
         </div>
         <div className="text-sm text-muted-foreground">
           Press{" "}
-          <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-            SPACE
-          </kbd>{" "}
+          <Kbd tooltip="Roll the entire dice pool">SPACE</Kbd>{" "}
           to roll pool •{" "}
-          <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-            ⌘+Number
-          </kbd>{" "}
+          <Kbd compound tooltip="Add dice to the pool">⌘+Number</Kbd>{" "}
           to add dice •{" "}
-          <kbd className="px-2 py-1 bg-muted rounded text-sm font-mono">
-            Numbers
-          </kbd>{" "}
+          <Kbd tooltip="Set a positive or negative modifier">0-9</Kbd>{" "}
           for modifier
         </div>
       </div>

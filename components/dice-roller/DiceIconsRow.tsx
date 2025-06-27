@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { Kbd } from '@/components/ui/kbd';
 
 interface DiceIcon {
   type: string;
@@ -87,9 +88,9 @@ export function DiceIconsRow() {
             </motion.div>
             <div className="text-center">
               <div className="text-sm font-medium text-foreground">{dice.type}</div>
-              <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs font-mono text-muted-foreground">
+              <Kbd compound tooltip={`Add ${dice.type} to dice pool`}>
                 {dice.shortcut}
-              </kbd>
+              </Kbd>
             </div>
           </div>
         );

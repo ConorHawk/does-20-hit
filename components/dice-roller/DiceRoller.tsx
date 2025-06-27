@@ -6,6 +6,7 @@ import { RollResults } from './RollResults';
 import { HelpModal } from './HelpModal';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { Kbd } from '@/components/ui/kbd';
 
 interface DiceRollerProps {
   className?: string;
@@ -52,7 +53,7 @@ export function DiceRoller({ className }: DiceRollerProps) {
           This is a keyboard-only dice roller. Use the shortcuts above to roll dice quickly.
         </p>
         <p>
-          Press <kbd className="px-2 py-1 bg-muted rounded font-mono">?</kbd> for full keyboard shortcuts
+          Press <Kbd tooltip="Show keyboard shortcuts help">?</Kbd> for full keyboard shortcuts
         </p>
       </motion.div>
 
